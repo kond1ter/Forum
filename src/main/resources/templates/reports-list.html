@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec='http://www.thymeleaf.org/extras/spring-security'>
+<head th:replace="~{fragments/head}"/>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+
+    <div class="content full-width relative">
+
+        <div th:if="${#lists.isEmpty(model.reports)}" class="content">
+            No reports
+        </div>
+
+        <div th:each="report : ${model.reports}" class="surface full-width">            
+            <div class="v-container">
+                <div class="h-container space-between">
+                    <small th:text="${report.authorName}" class="marked"></small>
+                    <div class="h-container baseline">
+                        <a class="link-button"                         
+                            th:href="@{/questions/{id}(id=${report.questionId})}">
+                            Go to source
+                        </a>
+                        <small th:text="${#temporals.format(report.date, 'HH:mm:ss dd.MM.yyyy')}" class="hint"></small>
+                    </div>
+                </div>
+                <p class="v-container">
+                    <p th:text="${report.reportText}" class="text-elipsis"></p>
+                </p>
+                <div class="h-container">
+                    <p th:text="${report.status}"></p>
+                    <a th:href="@{/reports/{id}(id=${report.id})}" class="link-button">Check ></a>
+                </div>
+            </div>
+
+        </div>
+
+        <nav th:if="${model.totalPages > 1}">
+            <ul>
+                <li th:each="pageNumber : ${#numbers.sequence(0, model.totalPages - 1)}">
+                    <a th:href="@{/reports(page=${pageNumber}, size=${size})}"
+                        th:classappend="${pageNumber == page} ? 'marked'"
+                        class="hoverable"
+                        th:text="${pageNumber + 1}"></a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</main>
+</body>
+</html>

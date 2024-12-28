@@ -1,0 +1,6 @@
+#!/bin/bash
+
+sudo docker run --name forum -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=forum -d postgres
+echo "Run postgres container"
+sudo docker run --name redis -p 6379:6379 -d redis:latest
+echo "Run redis container"

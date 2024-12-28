@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec='http://www.thymeleaf.org/extras/spring-security'>
+<head xmlns:th="http://www.thymeleaf.org">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Register</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<main>
+    <div class="content full-width" 
+        style="height: 100vh; align-items: center; justify-content: center; width: 300px;">
+
+        <div class="transp-surface">
+            <h2>Register</h2>
+        </div>
+        <div class="surface full-width v-container">
+            <p class="error-text full-width" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+            <form th:action="@{/users/register}"
+                th:method="post" class="v-container" th:object="${userRegisterModel}">
+
+                <label for="username">Username:</label>
+                <input type="text" name="username" th:errorclass="error-input"
+                       th:field="*{username}" class="full-width" placeholder="Username...">
+                <small class="error-text full-width" 
+                       th:if="${#fields.hasErrors('username')}" 
+                       th:errors="*{username}"></small>
+                <label for="password">Password:</label>
+                <input type="password" name="password" th:errorclass="error-input"
+                       th:field="*{password}" class="full-width" placeholder="Password...">
+                <small class="error-text full-width" 
+                       th:if="${#fields.hasErrors('password')}" 
+                       th:errors="*{password}"></small>
+                <label for="confirmPassword">Confirm password:</label>
+                <input type="password" name="confirmPassword" th:errorclass="error-input"
+                       th:field="*{confirmPassword}" class="full-width" placeholder="Confirm password...">
+                <small class="error-text full-width" 
+                       th:if="${#fields.hasErrors('confirmPassword')}" 
+                       th:errors="*{confirmPassword}"></small>
+
+                <button type="submit">Register</button>
+            </form>
+        </div>
+        <a th:href="@{/users/login}" class="link-button"><small>Go to login</small></a>
+
+    </div>
+</main>
+</body>
+</html>

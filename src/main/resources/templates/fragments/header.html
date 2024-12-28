@@ -1,0 +1,22 @@
+<header th:fragment="header" xmlns:th="http://www.thymeleaf.org">
+    <nav>
+        <a th:href="@{/questions}" 
+            th:classappend="${model.base.pageTitle} == 'Home' ? 'marked'"
+            class="hoverable">Home</a>
+        <a th:href="@{/questions?personal=true}" 
+            th:classappend="${model.base.pageTitle} == 'My questions' ? 'marked'"
+            class="hoverable">My Questions</a>
+        <a th:href="@{/pins}" sec:authorize="hasRole('ADMIN')"
+            th:classappend="${model.base.pageTitle} == 'Pin Requests' ? 'marked'"
+            class="hoverable">Pin requests</a>
+        <a th:href="@{/reports}" sec:authorize="hasRole('ADMIN')" 
+            th:classappend="${model.base.pageTitle} == 'Reports' ? 'marked'"
+            class="hoverable">Reports</a>
+    </nav>
+    <div class="h-container">
+        <form th:method="post" th:action="@{/users/logout}">
+            <button type="submit" class="link-button">Log out</button>
+        </form>
+        <p th:text="${model.base.user.name}" class="marked"></p>
+    </div>
+</header>

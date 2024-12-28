@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec='http://www.thymeleaf.org/extras/spring-security'>
+<head th:replace="~{fragments/head}"/>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+    <div class="content full-width">
+        <div class="transp-surface full-width">
+            <h2 th:if="not ${model.answer}">Report to question</h2>
+            <h2 th:if="${model.answer}">Report to answer</h2>
+        </div>
+        <div class="surface full-width v-container">
+
+            <div th:if="${model.question}" class="v-container full-width">
+                <div class="h-container space-between">
+                    <small th:text="${model.question.authorName}" class="marked"></small>
+                    <small th:text="${#temporals.format(model.question.date, 'HH:mm:ss dd.MM.yyyy')}" class="hint"></small>
+                </div>
+                <div class="v-container">
+                    <h2 th:text="${model.question.title}"></h2>
+                    <p th:text="${model.question.text}"></p>
+                </div>
+            </div>
+
+            <div th:if="${model.answer}" class="v-container full-width">
+                <div class="h-container space-between">
+                    <small th:text="${model.answer.authorName}" class="marked"></small>
+                    <small th:text="${#temporals.format(model.answer.date, 'HH:mm:ss dd.MM.yyyy')}" class="hint"></small>
+                </div>
+                <div>
+                    <p th:text="${model.answer.text}"></p>
+                </div>
+            </div>
+
+            <br>
+            <hr>
+
+            <div class="v-container full-width">
+                <div class="h-container space-between">
+                    <small th:text="${model.report.authorName}" class="marked"></small>
+                    <small th:text="${#temporals.format(model.report.date, 'HH:mm:ss dd.MM.yyyy')}" class="hint"></small>
+                </div>
+                <div>
+                    <p th:text="${model.report.reportText}"></p>
+                </div>
+            </div>
+
+            <div class="h-container full-width" th:if="${model.report.status == 'PENDING'}">
+                <form th:action="@{/reports/reject/{id}(id=${model.report.id})}">
+                    <button type="submit">Reject</button>
+                </form>
+                <form th:action="@{/reports/approve/{id}(id=${model.report.id})}">
+                    <input type="hidden" name="ban" value="false">
+                    <button type="submit">Approve</button>
+                </form>
+                <form th:action="@{/reports/approve/{id}(id=${model.report.id})}">
+                    <input type="hidden" name="ban" value="true">
+                    <button type="submit">Approve and ban user</button>
+                </form>
+            </div>
+
+            <div class="h-container full-width" th:if="${model.report.status != 'PENDING'}">
+                <p th:text="${model.report.status}"></p>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

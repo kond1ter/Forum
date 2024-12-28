@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec='http://www.thymeleaf.org/extras/spring-security'>
+<head th:replace="~{fragments/head}"/>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+    <div class="content full-width">
+        <div class="transp-surface full-width">
+            <h2>New question</h2>
+        </div>
+        <div class="surface full-width">
+            <form th:action="@{/questions/create}" 
+                th:method="post" th:object="${questionModel}" 
+                class="v-container align-items-end">
+
+                <label for="title" class="full-width">Title:</label>
+                <input type="text" th:field="*{title}"
+                        name="title" class="full-width" 
+                        th:errorclass="error-input"
+                        placeholder="Title...">
+                <small class="error-text full-width" 
+                   th:if="${#fields.hasErrors('title')}"
+                   th:errors="*{title}"></small>
+
+                <label for="text" class="full-width">Question:</label>
+                <textarea name="text" rows="8" th:field="*{text}"
+                    placeholder="Question..." 
+                    th:errorclass="error-input"
+                    class="full-width"></textarea>
+                <small class="error-text full-width" 
+                   th:if="${#fields.hasErrors('text')}"
+                   th:errors="*{text}"></small>
+
+                <label for="tags" class="full-width">Tags:</label>
+                <select name="tagsIds" class="full-width" th:field="*{tagsIds}" multiple>
+                    <option th:each="tagDto : ${model.availableTags}" 
+                            th:text="${tagDto.name}" 
+                            th:value="${tagDto.id}">
+                    </option>
+                </select>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

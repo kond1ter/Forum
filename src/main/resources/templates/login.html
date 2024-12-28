@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec='http://www.thymeleaf.org/extras/spring-security'>
+<head xmlns:th="http://www.thymeleaf.org">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<main>
+    <div class="content full-width" 
+        style="height: 100vh; align-items: center; justify-content: center; width: 300px;">
+
+        <div class="transp-surface">
+            <h2>Login</h2>
+        </div>
+        <div class="surface full-width v-container">
+            <p class="error-text full-width" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+            <form th:action="@{/users/login}"
+                th:method="post" class="v-container">
+
+                <label for="username">Username:</label>
+                <input type="text" name="username" th:value="${username}" class="full-width" placeholder="Username...">
+                <label for="password">Password:</label>
+                <input type="password" name="password" class="full-width" placeholder="Password...">
+
+                <button type="submit">Login</button>
+            </form>
+        </div>
+        <a th:href="@{/users/register}" class="link-button"><small>Go to register</small></a>
+
+    </div>
+</main>
+</body>
+</html>

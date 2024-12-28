@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec='http://www.thymeleaf.org/extras/spring-security'>
+<head th:replace="~{fragments/head}"/>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+    <div class="content full-width">
+        <div class="transp-surface full-width">
+            <h2 th:if="not ${model.answer}">Report to question</h2>
+            <h2 th:if="${model.answer}">Report to answer</h2>
+        </div>
+        <div class="surface full-width v-container">
+
+            <div th:if="${model.question}" class="v-container full-width">
+                <div class="h-container space-between">
+                    <small th:text="${model.question.authorName}" class="marked"></small>
+                    <small th:text="${#temporals.format(model.question.date, 'HH:mm:ss dd.MM.yyyy')}" class="hint"></small>
+                </div>
+                <div class="v-container">
+                    <h2 th:text="${model.question.title}"></h2>
+                    <p th:text="${model.question.text}"></p>
+                </div>
+            </div>
+
+            <div th:if="${model.answer}" class="v-container full-width">
+                <div class="h-container space-between">
+                    <small th:text="${model.answer.authorName}" class="marked"></small>
+                    <small th:text="${#temporals.format(model.answer.date, 'HH:mm:ss dd.MM.yyyy')}" class="hint"></small>
+                </div>
+                <div>
+                    <p th:text="${model.answer.text}"></p>
+                </div>
+            </div>
+
+            <form th:action="@{/reports/create}" 
+                th:method="post" th:object="${reportModel}" 
+                class="v-container align-items-end">
+
+                <input type="hidden" name="reportedQuestionId" th:field="*{reportedQuestionId}">
+                <input type="hidden" name="reportedAnswerId" th:field="*{reportedAnswerId}">
+
+                <small class="error-text full-width" 
+                       th:errors="*{reportText}" 
+                       th:if="${#fields.hasErrors('reportText')}"></small>
+                <textarea name="reportText" th:field="*{reportText}" rows="8" 
+                          placeholder="Report text..." class="full-width" 
+                          th:errorclass="error-input"></textarea>
+                <button type="submit">Submit</button>
+
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

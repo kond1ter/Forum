@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec='http://www.thymeleaf.org/extras/spring-security'>
+<head th:replace="~{fragments/head}"/>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+
+    <div class="content full-width relative">
+
+        <form 
+            th:action="@{/questions}" 
+            th:method="get" class="transp-surface full-width">
+            <input type="hidden" th:value="${personal}" name="personal">
+            <select name="tag">
+                <option value="">- not selected -</option>
+                <option th:each="tagDto : ${model.availableTags}" 
+                        th:text="${tagDto.name}" 
+                        th:value="${tagDto.id}"
+                        th:attr="selected=${tagDto.id == tag}">
+                </option>
+            </select>
+            <button type="submit">Find</button>
+            <a th:href="@{/questions/create}" 
+               th:if="${personal}"
+               class="link-button">+ New question</a>
+        </form>
+
+        <div th:if="${#lists.isEmpty(model.questions)}" class="content">
+            No questions
+        </div>
+
+        <a th:each="question : ${model.questions}" class="surface full-width" 
+            th:href="@{/questions/{id}(id=${question.id})}">
+            <div class="v-container">
+                <div class="h-container space-between">
+                    <div class="h-container baseline">
+                        <small th:text="${question.authorName}" class="marked"></small>
+                        <small class="hint" th:if="${question.closed}">(closed)</small>
+                    </div>
+                    <small th:text="${#temporals.format(question.date, 'HH:mm:ss dd.MM.yyyy')}" class="hint"></small>
+                </div>
+                <article class="v-container">
+                    <h2 th:text="${question.title}"></h2>
+                    <p th:text="${question.text}" class="text-elipsis"></p>
+                </article>
+                <div class="h-container baseline">
+                    <small th:each="tag : ${question.tags}" th:text="${tag.name}" class="marked-secondary"></small>
+                </div>
+            </div>
+        </a>
+
+        <nav th:if="${model.totalPages > 1}">
+            <ul>
+                <li th:each="pageNumber : ${#numbers.sequence(0, model.totalPages - 1)}">
+                    <a th:href="@{/questions(page=${pageNumber}, size=${size}, tag=${tag}, personal=${personal})}"
+                        th:classappend="${pageNumber == page} ? 'marked'"
+                        class="hoverable"
+                        th:text="${pageNumber + 1}"></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</main>
+</body>
+</html>

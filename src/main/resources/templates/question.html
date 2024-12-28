@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec='http://www.thymeleaf.org/extras/spring-security'>
+<head th:replace="~{fragments/head}"/>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+    <div class="content full-width">
+
+        <div class="transp-surface full-width h-container baseline">
+            <h2>[[${model.question.authorId} == ${model.base.user.id} ? 'Your question' : 'Question']]</h2>
+            <p class="hint">[[${model.question.closed} ? '(closed)']]</p>
+        </div>
+        <div class="transp-surface full-width h-container" 
+            th:if="${model.question.authorId} == ${model.base.user.id} and not ${model.question.closed}">
+            <form 
+                th:action="@{/questions/close/{id}(id=${model.question.id})}" 
+                th:method="get" class="v-container align-items-end">
+                <button type="submit">Close</button>
+            </form>
+            <form 
+                th:if="${model.pinRequestStatus == 'NONE' or model.pinRequestStatus == 'REJECTED'}"
+                th:action="@{/pins/create/{questionId}(questionId=${model.question.id})}"
+                th:method="get" class="v-container align-items-end">
+                <button type="submit">Pin request</button>
+            </form>
+            <p
+                th:if="${model.pinRequestStatus == 'PENDING'}">
+                Pin request has been sent
+            </p>
+            <p
+                th:if="${model.pinRequestStatus == 'APPROVED'}"
+                th:text="'Pinned to ' + 
+                    ${#temporals.format(model.question.pinnedTo, 'HH:mm:ss dd.MM.yyyy')}">
+            </p>
+            <p
+                th:if="${model.pinRequestStatus == 'REJECTED'}">
+                Latest pin request was rejected
+            </p>
+        </div>
+        <div class="surface v-container full-width">
+            <div class="h-container space-between baseline">
+                <small th:text="${model.question.authorName}" class="marked"></small>
+                <div class="h-container baseline">
+                    <a class="link-button" th:if="not ${model.base.user.id == model.question.authorId}"
+                        th:href="@{/reports/create(questionId=${model.question.id})}">
+                        Report
+                    </a>
+                    <small th:text="${#temporals.format(model.question.date, 'HH:mm:ss dd.MM.yyyy')}" class="hint"></small>
+                </div>
+            </div>
+            <div class="v-container">
+                <h2 th:text="${model.question.title}"></h2>
+                <p th:text="${model.question.text}"></p>
+            </div>
+            <div class="h-container baseline">
+                <small th:each="tag : ${model.question.tags}" 
+                    th:text="${tag.name}" class="marked-secondary"></small>
+            </div>
+        </div>
+
+        <div th:if="not ${model.question.closed}" class="transp-surface full-width">
+            <h2>Your answer</h2>
+        </div>
+        <div class="surface full-width v-container" 
+             th:if="not ${model.question.closed}">
+            <form th:action="@{/answers/create}" 
+                  th:method="post" 
+                  th:object="${answerModel}" 
+                  class="v-container align-items-end">
+                <input type="hidden" 
+                       name="questionId" 
+                       th:field="*{questionId}">
+                <small class="error-text full-width" 
+                       th:if="${#fields.hasErrors('text')}" 
+                       th:errors="*{text}"></small>
+                <textarea name="text" 
+                          th:field="*{text}" 
+                          rows="8" 
+                          placeholder="Answer here..." 
+                          class="full-width"
+                          th:errorclass="error-input"></textarea>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div class="transp-surface full-width">
+            <h2>Answers</h2>
+        </div>
+        <div th:if="${#lists.isEmpty(model.answers)}" class="content">
+            Here is no answers yet
+        </div>
+
+        <div th:each="answer : ${model.answers}" class="surface v-container full-width">
+            <div class="h-container space-between">
+                <small th:text="${answer.authorName}" class="marked"></small>
+                <div class="h-container baseline">
+                    <a class="link-button" th:if="not ${model.base.user.id == answer.authorId}"
+                        th:href="@{/reports/create(questionId=${model.question.id},answerId=${answer.id})}">
+                        Report
+                    </a>
+                    <small th:text="${#temporals.format(answer.date, 'HH:mm:ss dd.MM.yyyy')}" class="hint"></small>
+                </div>
+            </div>
+            <div>
+                <p th:text="${answer.text}"></p>
+            </div>
+            <div class="v-container align-items-end">
+                <div class="h-container">
+                    <a th:if="${answer.currUserReaction == true}"
+                        th:href="@{/reactions/remove(
+                        questionId=${model.question.id},
+                        reactionId=${answer.currUserReactionId})}" class="marked">⇧</a>
+                    <a th:if="${answer.currUserReaction != true}"
+                        th:href="@{/reactions/create(
+                        questionId=${model.question.id},
+                        answerId=${answer.id},
+                        isPositive=true)}" class="hoverable">⇧</a>
+
+                    <p th:text="${answer.reactionsCounter}"></p>
+
+                    <a th:if="${answer.currUserReaction == false}"
+                        th:href="@{/reactions/remove(
+                        questionId=${model.question.id},
+                        reactionId=${answer.currUserReactionId})}" class="marked">⇩</a>
+                    <a th:if="${answer.currUserReaction != false}"
+                    th:href="@{/reactions/create(
+                        questionId=${model.question.id},
+                        answerId=${answer.id},
+                        isPositive=false)}" class="hoverable">⇩</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

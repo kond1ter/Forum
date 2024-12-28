@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec='http://www.thymeleaf.org/extras/spring-security'>
+<head th:replace="~{fragments/head}"/>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+
+    <div class="content full-width relative">
+
+        <div th:if="${#lists.isEmpty(model.requests)}" class="content">
+            No pin requests
+        </div>
+
+        <div th:each="request : ${model.requests}" class="surface full-width">            
+            <div class="v-container">
+                <div class="h-container space-between">
+                    <small th:text="${request.question.authorName}" class="marked"></small>
+                    <div class="h-container baseline">
+                        <a class="link-button"                         
+                            th:href="@{/questions/{id}(id=${request.question.id})}">
+                            Go to source
+                        </a>
+                        <small th:text="${#temporals.format(request.date, 'HH:mm:ss dd.MM.yyyy')}" class="hint"></small>
+                    </div>
+                </div>
+                <article class="v-container">
+                    <h2 th:text="${request.question.title}"></h2>
+                    <p th:text="${request.question.text}" class="text-elipsis"></p>
+                </article>
+                <hr>
+                <div th:if="${request.status == 'PENDING'}" class="h-container baseline">
+                    <form th:action="@{/pins/approve/{id}(id=${request.id})}"
+                            th:method="get">
+                        <button type="submit" th:text="'Pin for ' + ${request.days} + ' days'"></button>
+                    </form>
+                    <form th:action="@{/pins/reject/{id}(id=${request.id})}"
+                            th:method="get">
+                        <button type="submit">Reject</button>
+                    </form>
+                </div>
+                <div th:if="${request.status == 'APPROVED'}" class="h-container baseline">
+                    Approved
+                </div>
+                <div th:if="${request.status == 'REJECTED'}" class="h-container baseline">
+                    Rejected
+                </div>
+            </div>
+        </div>
+
+        <nav th:if="${model.totalPages > 1}">
+            <ul>
+                <li th:each="pageNumber : ${#numbers.sequence(0, model.totalPages - 1)}">
+                    <a th:href="@{/pins(page=${pageNumber}, size=${size})}"
+                        th:classappend="${pageNumber == page} ? 'marked'"
+                        class="hoverable"
+                        th:text="${pageNumber + 1}"></a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</main>
+</body>
+</html>

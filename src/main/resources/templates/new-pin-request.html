@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec='http://www.thymeleaf.org/extras/spring-security'>
+<head th:replace="~{fragments/head}"/>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+    <div class="content full-width">
+
+        <div class="transp-surface full-width h-container baseline">
+            <h2>Register pin request</h2>
+        </div>
+
+        <div class="surface full-width v-container">
+            <h2 th:text="${model.question.title}"></h2>
+            <p class="text-elipsis" th:text="${model.question.text}"></p>
+            <hr>
+            <p>Pin for:</p>
+            <form th:action="@{/pins/create}"
+                th:method="post" class="v-container" th:object="${form}">
+
+                <input type="hidden" th:field="*{questionId}">
+                <div>
+                    <input type="radio" th:field="*{days}" id="daysChioce1" name="days" value="1">
+                    <label for="daysChioce1">1 day</label>
+
+                    <input type="radio" th:field="*{days}" id="daysChioce2" name="days" value="3">
+                    <label for="daysChioce2">3 days</label>
+
+                    <input type="radio" th:field="*{days}" id="daysChioce3" name="days" value="5">
+                    <label for="daysChioce3">5 days</label>
+                </div>
+
+                <button type="submit">Submit request</button>
+            </form>
+        </div>
+
+    </div>
+</main>
+</body>
+</html>
